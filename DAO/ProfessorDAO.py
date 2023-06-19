@@ -1,3 +1,4 @@
+from entities.Professor import Professor
 from entities.User import User
 from dotenv import load_dotenv
 import traceback
@@ -5,7 +6,7 @@ import psycopg2
 import os
 
 
-class UserDAO:
+class ProfessorDAO:
     def __init__(self):
         load_dotenv()  # Load the variables from .env file
         self.USER = os.getenv("USER")
@@ -19,12 +20,12 @@ class UserDAO:
                                 host=self.HOST, port=self.PORT, database=self.DATABASE)
 
 
-def insertUser(user):
+def insertProfessor(professor):
     try:
-        connection = UserDAO().openConnection()
+        connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"INSERT INTO usuario (id, name, password, ddd, number) "
-                       f"VALUES ('{user.id}', '{user.name}', '{user.password}', '{user.ddd}', '{user.number}')")
+        cursor.execute(f"INSERT INTO professor (user_id) "
+                       f"VALUES ({professor.id})")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
@@ -36,65 +37,52 @@ def insertUser(user):
         connection.close()
 
 
-def getOneUser(id):
-    user = None
+def getOneProfessor(id):
+    professor = None
     try:
-        connection = UserDAO().openConnection()
+        connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM usuario WHERE id = '{id}'")
+        cursor.execute(f"SELECT u.id, u.name, u.ddd, u.number "
+                       f"FROM professor AS p "
+                       f"JOIN usuario AS u ON p.user_id = u.id "
+                       f"WHERE p.user_id = {id};")
         register = cursor.fetchone()
         if register:
-            user = User(register[0], register[1], register[2], register[4], register[5])
+            professor = Professor(register[0], register[1], None, register[2], register[3])
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
             connection.close()
-        return user
+        return professor
 
 
-def getAllUsers():
-    users = []
+def getAllProfessors():
+    professors = []
     try:
-        connection = UserDAO().openConnection()
+        connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM usuario")
+        cursor.execute(f"SELECT u.id, u.name, u.ddd, u.number "
+                       f"FROM professor AS p "
+                       f"JOIN usuario AS u ON p.user_id = u.id;")
         registers = cursor.fetchall()
         for register in registers:
-            users.append(User(register[0], register[1], register[2], register[4], register[5]))
+            professors.append(Professor(register[0], register[1], None, register[2], register[3]))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
-        return users
+        return professors
 
 
-def updateUser(id, newUser):
+def deleteProfessor(id):
     try:
-        connection = UserDAO().openConnection()
+        connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute("UPDATE usuario SET name = %s, password = %s, ddd = %s, number = %s WHERE id = %s",
-                       (newUser.name, newUser.password, newUser.ddd, newUser.number, id))
-
-        connection.commit()
-        if cursor.rowcount > 0:
-            print("Success update!")
-    except (Exception, psycopg2.Error) as error:
-        traceback.print_exc()
-    finally:
-        if connection:
-            cursor.close()
-        connection.close()
-
-
-def deleteUser(id):
-    try:
-        connection = UserDAO().openConnection()
-        cursor = connection.cursor()
-        cursor.execute(f"DELETE FROM usuario WHERE id= '{id}'")
+        cursor.execute(f"DELETE FROM professor WHERE user_id= '{id}'")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success delete!")

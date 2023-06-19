@@ -1,18 +1,23 @@
 from entities.SchoolClass import SchoolClass
-import psycopg2
+from dotenv import load_dotenv
 import traceback
+import psycopg2
+import os
+
 
 class SchoolClassDao:
     def __init__(self):
-        self.USER = "postgres"
-        self.PASSWORD = "Jv4984538171"
-        self.HOST = "127.0.0.1"
-        self.PORT = "5432"
-        self.DATABASE = "portuno"
+        load_dotenv()  # Load the variables from .env file
+        self.USER = os.getenv("USER")
+        self.PASSWORD = os.getenv("PASSWORD")
+        self.HOST = os.getenv("HOST")
+        self.PORT = os.getenv("PORT")
+        self.DATABASE = os.getenv("DATABASE")
 
     def openConnection(self):
         return psycopg2.connect(user=self.USER, password=self.PASSWORD,
                                 host=self.HOST, port=self.PORT, database=self.DATABASE)
+
 
 def insertSchoolClass(schoolClass):
     try:
@@ -31,6 +36,7 @@ def insertSchoolClass(schoolClass):
             cursor.close()
         connection.close()
 
+
 def getOneSchoolClass(id):
     schoolClass = None
     try:
@@ -48,6 +54,7 @@ def getOneSchoolClass(id):
             connection.close()
         return schoolClass
 
+
 def getAllSchoolClasses():
     schoolClasses = []
     try:
@@ -64,6 +71,7 @@ def getAllSchoolClasses():
             cursor.close()
         connection.close()
         return schoolClasses
+
 
 def updateSchoolClass(id, newSchoolClass):
     try:
@@ -85,6 +93,7 @@ def updateSchoolClass(id, newSchoolClass):
             cursor.close()
         connection.close()
 
+
 def deleteSchoolClass(id):
     try:
         connection = SchoolClassDao().openConnection()
@@ -99,6 +108,3 @@ def deleteSchoolClass(id):
         if connection:
             cursor.close()
         connection.close()
-
-
-
