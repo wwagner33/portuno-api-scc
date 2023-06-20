@@ -8,7 +8,7 @@ import os
 
 class SemesterDAO:
     def __init__(self):
-        load_dotenv()  # Load the variables from .env file
+        load_dotenv()
         self.USER = os.getenv("USER")
         self.PASSWORD = os.getenv("PASSWORD")
         self.HOST = os.getenv("HOST")
@@ -24,12 +24,8 @@ def insertSemester(semester):
     try:
         connection = SemesterDAO().openConnection()
         cursor = connection.cursor()
-
-        beginning_date = datetime.strptime(semester.beginning_date, '%d/%m/%Y')
-        ending_date = datetime.strptime(semester.ending_date, '%d/%m/%Y')
-
         cursor.execute(f"INSERT INTO semester (name, beginning_date, ending_date) "
-                       f"VALUES ('{semester.name}', '{beginning_date}', '{ending_date}')")
+                       f"VALUES ('{semester.name}', '{semester.beginning_date}', '{semester.ending_date}')")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
@@ -84,12 +80,9 @@ def updateSemester(name, newSemester):
         connection = SemesterDAO().openConnection()
         cursor = connection.cursor()
 
-        beginning_date = datetime.strptime(newSemester.beginning_date, '%d/%m/%Y')
-        ending_date = datetime.strptime(newSemester.ending_date, '%d/%m/%Y')
-
         cursor.execute(f"UPDATE semester SET name = '{newSemester.name}', "
-                       f"beginning_date = '{beginning_date}', "
-                       f"ending_date = '{ending_date}' "
+                       f"beginning_date = '{newSemester.beginning_date}', "
+                       f"ending_date = '{newSemester.ending_date}' "
                        f"WHERE name = '{name}'")
 
         connection.commit()

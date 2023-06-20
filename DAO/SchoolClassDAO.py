@@ -24,8 +24,8 @@ def insertSchoolClass(schoolClass):
         connection = SchoolClassDao().openConnection()
         cursor = connection.cursor()
 
-        cursor.execute(f"INSERT INTO class (id, day_week, subject) "
-                       f"VALUES ('{schoolClass.id}', '{schoolClass.day_week}', '{schoolClass.subject}')")
+        cursor.execute(f"INSERT INTO class (day_week, subject) "
+                       f"VALUES ('{schoolClass.day_week}', '{schoolClass.subject}')")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")

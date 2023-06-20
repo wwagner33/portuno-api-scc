@@ -7,7 +7,7 @@ import os
 
 class UserDAO:
     def __init__(self):
-        load_dotenv()  # Load the variables from .env file
+        load_dotenv()
         self.USER = os.getenv("USER")
         self.PASSWORD = os.getenv("PASSWORD")
         self.HOST = os.getenv("HOST")
@@ -24,7 +24,7 @@ def insertUser(user):
         connection = UserDAO().openConnection()
         cursor = connection.cursor()
         cursor.execute(f"INSERT INTO usuario (id, name, password, ddd, number) "
-                       f"VALUES ('{user.id}', '{user.name}', '{user.password}', '{user.ddd}', '{user.number}')")
+                       f"VALUES ('{user.id}', '{user.name}', '{user.password}', {user.ddd}, {user.number})")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
@@ -44,7 +44,7 @@ def getOneUser(id):
         cursor.execute(f"SELECT * FROM usuario WHERE id = '{id}'")
         register = cursor.fetchone()
         if register:
-            user = User(register[0], register[1], register[2], register[4], register[5])
+            user = User(register[0], register[1], register[2], register[3], register[4])
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -63,8 +63,7 @@ def getAllUsers():
         registers = cursor.fetchall()
         for register in registers:
             user = User(register[0], register[1], register[2], register[3], register[4])
-            print(user)
-            # users.append()
+            users.append(user)
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:

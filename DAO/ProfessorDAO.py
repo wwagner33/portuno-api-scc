@@ -25,7 +25,7 @@ def insertProfessor(professor):
         connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
         cursor.execute(f"INSERT INTO professor (user_id) "
-                       f"VALUES ({professor.id})")
+                       f"VALUES ({professor.user_id})")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
@@ -42,13 +42,11 @@ def getOneProfessor(id):
     try:
         connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT u.id, u.name, u.ddd, u.number "
-                       f"FROM professor AS p "
-                       f"JOIN usuario AS u ON p.user_id = u.id "
-                       f"WHERE p.user_id = {id};")
+        cursor.execute(f"SELECT * FROM professor "
+                       f"WHERE user_id = {id};")
         register = cursor.fetchone()
         if register:
-            professor = Professor(register[0], register[1], None, register[2], register[3])
+            professor = Professor(register[0])
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -63,12 +61,10 @@ def getAllProfessors():
     try:
         connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT u.id, u.name, u.ddd, u.number "
-                       f"FROM professor AS p "
-                       f"JOIN usuario AS u ON p.user_id = u.id;")
+        cursor.execute(f"SELECT * FROM professor")
         registers = cursor.fetchall()
         for register in registers:
-            professors.append(Professor(register[0], register[1], None, register[2], register[3]))
+            professors.append(Professor(register[0]))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:

@@ -1,4 +1,4 @@
-class Classroom(object):
+class Classroom:
 
     def __init__(self, id, name, short_name, floor, type):
         self.type = type
@@ -6,3 +6,5 @@ class Classroom(object):
         self.short_name = short_name
         self.name = name
         self.id = id
+        self.professor_user_id = None
+

@@ -7,7 +7,7 @@ import os
 
 class ClassroomDAO:
     def __init__(self):
-        load_dotenv()  # Load the variables from .env file
+        load_dotenv()
         self.USER = os.getenv("USER")
         self.PASSWORD = os.getenv("PASSWORD")
         self.HOST = os.getenv("HOST")
@@ -37,48 +37,49 @@ def insertClassroom(classroom):
         connection.close()
 
 
-def getOneUser(id):
-    user = None
+def getOneClassroom(id):
+    global cursor
+    classroom = None
     try:
         connection = ClassroomDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM usuario WHERE id = '{id}'")
+        cursor.execute(f"SELECT * FROM classroom WHERE id = '{id}'")
         register = cursor.fetchone()
         if register:
-            user = User(register[0], register[1], register[2], register[4], register[5])
+            classroom = Classroom(register[0], register[1], register[2], register[3], register[4])
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
             connection.close()
-        return user
+        return classroom
 
 
-def getAllUsers():
-    users = []
+def getAllClassrooms():
+    classrooms = []
     try:
         connection = ClassroomDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM usuario")
+        cursor.execute(f"SELECT * FROM classroom")
         registers = cursor.fetchall()
         for register in registers:
-            users.append(User(register[0], register[1], register[2], register[4], register[5]))
+            classrooms.append(Classroom(register[0], register[1], register[2], register[3], register[4]))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
-        return users
+        return classrooms
 
 
-def updateUser(id, newUser):
+def updateClassroom(id, newClassroom):
     try:
         connection = ClassroomDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute("UPDATE usuario SET name = %s, password = %s, ddd = %s, number = %s WHERE id = %s",
-                       (newUser.name, newUser.password, newUser.ddd, newUser.number, id))
+        cursor.execute("UPDATE classroom SET name = %s, short_name = %s, floor = %s, type = %s WHERE id = %s",
+                       (newClassroom.name, newClassroom.short_name, newClassroom.floor, newClassroom.type, id))
 
         connection.commit()
         if cursor.rowcount > 0:
@@ -90,12 +91,27 @@ def updateUser(id, newUser):
             cursor.close()
         connection.close()
 
-
-def deleteUser(id):
+def updateProfessor_user_id(id, professor_user_id):
     try:
         connection = ClassroomDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"DELETE FROM usuario WHERE id= '{id}'")
+        cursor.execute("UPDATE classroom SET professor_user_id = %s WHERE id = %s",
+                       (professor_user_id, id))
+        connection.commit()
+        if cursor.rowcount > 0:
+            print("Success update professor id!")
+    except (Exception, psycopg2.Error) as error:
+        traceback.print_exc()
+    finally:
+        if connection:
+            cursor.close()
+        connection.close()
+
+def deleteClassroom(id):
+    try:
+        connection = ClassroomDAO().openConnection()
+        cursor = connection.cursor()
+        cursor.execute(f"DELETE FROM classroom WHERE id= '{id}'")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success delete!")
@@ -105,3 +121,4 @@ def deleteUser(id):
         if connection:
             cursor.close()
         connection.close()
+
