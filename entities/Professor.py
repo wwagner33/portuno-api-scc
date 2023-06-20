@@ -1,16 +1,20 @@
 from entities.User import User
 
 
-class Professor (User):
-    def __init__(self, id, name, password, ddd, number):
-        super().__init__(id, name, password, ddd, number)
-        self.professorPermissions = []
+class Professor(User):
+    def __init__(self, user_id, name, password, ddd, number):
+        super().__init__(user_id, name, password, ddd, number)
+        self._professor_permissions = []
 
-    def addProfessorPermission(self, permission):
-        self.professorPermissions.append(permission)
+    @property
+    def professor_permissions(self):
+        return self._professor_permissions
 
-    def removeProfessorPermission(self, index):
-        self.professorPermissions.remove(index)
+    def add_professor_permission(self, permission):
+        self._professor_permissions.append(permission)
 
-    def getProfessorPermission(self, permission):
-        self.professorPermissions.index(permission)
+    def remove_professor_permission(self, permission):
+        self._professor_permissions.remove(permission)
+
+    def get_professor_permission(self, index):
+        return self._professor_permissions[index]
