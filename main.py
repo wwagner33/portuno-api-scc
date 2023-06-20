@@ -1,9 +1,9 @@
-from DAO import ProfessorDAO
-from entities.User import User
+from flask import Flask
+from Controllers import UserController
+
+app = Flask(__name__)
+
+app.register_blueprint(UserController.users_bp)
 
 if __name__ == '__main__':
-    ProfessorDAO.deleteProfessor(550723)
-
-
-
-
+    app.run()

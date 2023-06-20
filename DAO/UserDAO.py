@@ -59,10 +59,12 @@ def getAllUsers():
     try:
         connection = UserDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM usuario")
+        cursor.execute(f"SELECT * FROM USUARIO")
         registers = cursor.fetchall()
         for register in registers:
-            users.append(User(register[0], register[1], register[2], register[4], register[5]))
+            user = User(register[0], register[1], register[2], register[3], register[4])
+            print(user)
+            # users.append()
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
