@@ -24,7 +24,7 @@ def insertUser(user):
         connection = UserDAO().openConnection()
         cursor = connection.cursor()
         cursor.execute(f"INSERT INTO usuario (id, name, password, ddd, number) "
-                       f"VALUES ('{user.id}', '{user.name}', '{user.password}', {user.ddd}, {user.number})")
+                       f"VALUES ({user.id}, '{user.name}', '{user.password}', {user.ddd}, {user.number})")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
