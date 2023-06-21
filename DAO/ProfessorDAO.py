@@ -42,11 +42,12 @@ def getOneProfessor(id):
     try:
         connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM professor "
+        cursor.execute("SELECT u.id, u.name, u.password, u.ddd, u.number FROM professor "
+                       "JOIN usuario AS u ON professor.user_id = u.id "
                        f"WHERE user_id = {id};")
         register = cursor.fetchone()
         if register:
-            professor = Professor(register[0])
+            professor = User(register[0], register[1], register[2], register[3], register[4])
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -61,10 +62,11 @@ def getAllProfessors():
     try:
         connection = ProfessorDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM professor")
+        cursor.execute("SELECT u.id, u.name, u.password, u.ddd, u.number FROM professor "
+                       "JOIN usuario AS u ON professor.user_id = u.id")
         registers = cursor.fetchall()
         for register in registers:
-            professors.append(Professor(register[0]))
+            professors.append(User(register[0], register[1], register[2], register[3], register[4]))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
