@@ -26,10 +26,13 @@ def semester_serializer(semester):
 @semesters_bp.route('/semesters', methods=['GET'])
 def get_semesters():
     semesters = SemesterDAO.getAllSemesters()
-    if semesters:
-        serialized_semesters = [list_semester_serializer(semester) for semester in semesters]
-        return jsonify({"data": serialized_semesters}), 200
-    return jsonify({"message": "an error has occurred"}), 500
+    try:
+        if semesters:
+            serialized_semesters = [list_semester_serializer(semester) for semester in semesters]
+            return jsonify({"data": serialized_semesters}), 200
+        return jsonify({"message": "No content"}), 204
+    except Exception as e:
+        return jsonify({"message": "an error has occurred: " + str(e)}), 500
 
 
 @semesters_bp.route('/semesters/<name>', methods=['GET'])
@@ -39,7 +42,7 @@ def get_semester(name):
         serialized_semester = semester_serializer(semester)
         print(serialized_semester)
         return jsonify({"data": serialized_semester}), 200
-    return jsonify({"message": "semester not found :("}), 500
+    return jsonify({"message": "semester not found"}), 500
 
 
 @semesters_bp.route('/semesters', methods=['POST'])

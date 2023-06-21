@@ -24,8 +24,8 @@ def insertSchoolClass(schoolClass):
         connection = SchoolClassDao().openConnection()
         cursor = connection.cursor()
 
-        cursor.execute(f"INSERT INTO class (day_week, subject) "
-                       f"VALUES ('{schoolClass.day_week}', '{schoolClass.subject}')")
+        cursor.execute(f"INSERT INTO class (day_week, subject, hour) "
+                       f"VALUES ('{schoolClass.day_week}', '{schoolClass.subject}', '{schoolClass.hour}')")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
@@ -45,7 +45,7 @@ def getOneSchoolClass(id):
         cursor.execute(f"SELECT * FROM class WHERE id = '{id}'")
         register = cursor.fetchone()
         if register:
-            schoolClass = SchoolClass(register[0], register[1], register[2])
+            schoolClass = SchoolClass(register[0], register[1], register[2], register[3])
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -63,7 +63,7 @@ def getAllSchoolClasses():
         cursor.execute(f"SELECT * FROM class")
         registers = cursor.fetchall()
         for register in registers:
-            schoolClasses.append(SchoolClass(register[0], register[1], register[2]))
+            schoolClasses.append(SchoolClass(register[0], register[1], register[2], register[3]))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -80,7 +80,8 @@ def updateSchoolClass(id, newSchoolClass):
 
         cursor.execute(f"UPDATE class SET "
                        f"day_week = '{newSchoolClass.day_week}', "
-                       f"subject = '{newSchoolClass.subject}' "
+                       f"subject = '{newSchoolClass.subject}', "
+                       f"hour = '{newSchoolClass.hour}' "
                        f"WHERE id = '{id}'")
 
         connection.commit()

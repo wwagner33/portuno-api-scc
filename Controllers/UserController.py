@@ -9,10 +9,13 @@ users_bp = Blueprint('users', __name__)
 @users_bp.route('/users', methods=['GET'])
 def get_users():
     users = UserDAO.getAllUsers()
-    if users:
-        serialized_users = [user.__dict__ for user in users]
-        return jsonify({"data": serialized_users}), 200
-    return jsonify({"message": "an error has occurred"}), 500
+    try:
+        if users:
+            serialized_users = [user.__dict__ for user in users]
+            return jsonify({"data": serialized_users}), 200
+        return jsonify({"message": "No content"}), 204
+    except Exception as e:
+        return jsonify({"message": "an error has occurred: " + str(e)}), 500
 
 
 @users_bp.route('/users/<id>', methods=['GET'])
@@ -21,7 +24,7 @@ def get_user(id):
     if user:
         serialized_user = user.__dict__
         return jsonify({"data": serialized_user}), 200
-    return jsonify({"message": "User not found :("}), 500
+    return jsonify({"message": "User not found"}), 500
 
 
 @users_bp.route('/users', methods=['POST'])
