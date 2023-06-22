@@ -20,24 +20,27 @@ class OccupancyDAO:
 
 
 def insertOccupancy(occupancy):
+    success_operation = False
     try:
         connection = OccupancyDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"INSERT INTO occupancy (id, goal, beginning_date_time, "
+        cursor.execute(f"INSERT INTO occupancy (goal, beginning_date_time, "
                        f"ending_date_time, semester_name, user_id, classroom_id, class_id) "
-                       f"VALUES ({occupancy.id}, '{occupancy.goal}', '{occupancy.beginning_time}', "
+                       f"VALUES ('{occupancy.goal}', '{occupancy.beginning_time}', "
                        f"{occupancy.ending_time if occupancy.ending_time is not None else 'NULL'}, "
                        f"'{occupancy.semester}', {occupancy.user}, {occupancy.classroom}, "
                        f"{occupancy.the_class if occupancy.the_class is not None else 'NULL'})")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
+            success_operation = True
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
+        return success_operation
 
 
 def getOneOccupancy(id):
@@ -80,24 +83,28 @@ def getAllOccupancies():
 
 
 def updateOccupancy(id, newOccupancy):
+    success_operation = False
     try:
         connection = OccupancyDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute("UPDATE occupancy SET ending_date_time = %s, user_id = %s, goal = %s WHERE id = %s",
-                       (newOccupancy.ending_time, newOccupancy.user, newOccupancy.goal, id))
+        cursor.execute("UPDATE occupancy SET ending_date_time = %s WHERE id = %s",
+                       (newOccupancy.ending_time, id))
 
         connection.commit()
         if cursor.rowcount > 0:
             print("Success update!")
+            success_operation = True
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
+        return success_operation
 
 
 def deleteOccupancy(id):
+    success_operation = False
     try:
         connection = OccupancyDAO().openConnection()
         cursor = connection.cursor()
@@ -105,9 +112,11 @@ def deleteOccupancy(id):
         connection.commit()
         if cursor.rowcount > 0:
             print("Success delete!")
+            success_operation = True
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
+        return success_operation

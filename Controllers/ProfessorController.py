@@ -27,7 +27,7 @@ def get_professor(id):
         return jsonify({"data": serialized_user}), 200
     return jsonify({"message": "Professor not found"}), 500
 
-# Ainda precisa ajustar
+
 @professor_bp.route('/professors', methods=['POST'])
 def create_professor():
     data = request.get_json()
@@ -38,3 +38,11 @@ def create_professor():
     except Exception as e:
         return jsonify({"message": "an error has occurred: " + str(e)}), 500
     return jsonify({"message": "Professor created successfully"}), 200
+
+@professor_bp.route('/professors/<id>', methods=['DELETE'])
+def delete_professor(id):
+    try:
+        ProfessorDAO.deleteProfessor(id)
+    except Exception as e:
+        return jsonify({"message": "an error has occurred: " + str(e)}), 500
+    return jsonify({"message": "Professor deleted successfully"}), 200
