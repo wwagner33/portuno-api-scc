@@ -22,6 +22,7 @@ class PermissionDAO:
 
 
 def insertPermission(permission):
+    success_operation = False
     try:
         connection = PermissionDAO().openConnection()
         cursor = connection.cursor()
@@ -32,12 +33,14 @@ def insertPermission(permission):
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
+            success_operation = True
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
+        return success_operation
 
 
 def getOnePermission(id):
@@ -78,6 +81,7 @@ def getAllPermissions():
 
 
 def updatePermission(id, ending_date_time):
+    success_operation = False
     try:
         connection = PermissionDAO().openConnection()
         cursor = connection.cursor()
@@ -87,15 +91,18 @@ def updatePermission(id, ending_date_time):
         connection.commit()
         if cursor.rowcount > 0:
             print("Success update!")
+            success_operation = True
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
+        return success_operation
 
 
 def deletePermission(id):
+    success_operation = False
     try:
         connection = PermissionDAO().openConnection()
         cursor = connection.cursor()
@@ -103,9 +110,11 @@ def deletePermission(id):
         connection.commit()
         if cursor.rowcount > 0:
             print("Success delete!")
+            success_operation = True
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
+        return success_operation

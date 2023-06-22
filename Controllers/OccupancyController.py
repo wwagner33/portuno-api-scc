@@ -1,10 +1,8 @@
 import datetime
 
 from flask import Flask, jsonify, Blueprint, request
-from DAO import ProfessorDAO, UserDAO, OccupancyDAO
+from DAO import OccupancyDAO
 from entities.Ocupancy import Occupancy
-from entities.Professor import Professor
-from entities.User import User
 
 app = Flask(__name__)
 occupancy_bp = Blueprint('occupancies', __name__)
@@ -23,7 +21,7 @@ def get_occupancies():
 
 
 @occupancy_bp.route('/occupancies/<id>', methods=['GET'])
-def get_professor(id):
+def get_occupancy(id):
     occupancy = OccupancyDAO.getOneOccupancy(id)
     if occupancy:
         serialized_user = occupancy.__dict__

@@ -48,7 +48,21 @@ def getOneOccupancy(id):
     try:
         connection = OccupancyDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM occupancy WHERE id = '{id}'")
+        query = """
+            SELECT
+                occupancy.id, occupancy.beginning_date_time, occupancy.ending_date_time, occupancy.goal,
+                classroom.name AS classroom_name,
+                usuario.name AS user_name,
+                semester.name AS semester_name,
+                class.subject
+            FROM occupancy
+            JOIN usuario ON occupancy.user_id = usuario.id
+            JOIN classroom ON occupancy.classroom_id = classroom.id
+            JOIN semester ON occupancy.semester_name = semester.name
+            LEFT JOIN class ON occupancy.class_id = class.id
+            WHERE occupancy.id = %s
+            """
+        cursor.execute(query, id)
         register = cursor.fetchone()
         if register:
             occupancy = Occupancy(register[0], register[1], register[2], register[3],
