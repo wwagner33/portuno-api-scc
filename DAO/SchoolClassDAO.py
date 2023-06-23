@@ -45,7 +45,7 @@ def getOneSchoolClass(id):
         cursor.execute(f"SELECT * FROM class WHERE id = '{id}'")
         register = cursor.fetchone()
         if register:
-            schoolClass = SchoolClass(register[0], register[1], register[2], register[3])
+            schoolClass = SchoolClass(register[0], register[1], register[2], register[3].strftime("%H:%M:%S"))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -63,7 +63,7 @@ def getAllSchoolClasses():
         cursor.execute(f"SELECT * FROM class")
         registers = cursor.fetchall()
         for register in registers:
-            schoolClasses.append(SchoolClass(register[0], register[1], register[2], register[3]))
+            schoolClasses.append(SchoolClass(register[0], register[1], register[2], register[3].strftime("%H:%M:%S")))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:

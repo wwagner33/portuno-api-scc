@@ -26,7 +26,7 @@ def get_permissions():
 # GET ALL DATA FROM PERMISSION
 @permission_bp.route('/permissions/<id>', methods=['GET'])
 def get_permission(id):
-    occupancy = PermissionDAO.getOnePermission()
+    occupancy = PermissionDAO.getOnePermission(id)
     if occupancy:
         serialized_user = occupancy.__dict__
         return jsonify({"data": serialized_user}), 200

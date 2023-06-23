@@ -48,7 +48,21 @@ def getOnePermission(id):
     try:
         connection = PermissionDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM permission WHERE id = '{id}'")
+        query = """
+             SELECT
+                permission.id, 
+                permission.beginning_date_time, 
+                permission.ending_date_time,
+                (SELECT usuario.name FROM usuario WHERE usuario.id = professor.user_id) AS professor_name,
+                usuario.name AS user_name,
+                classroom.name AS classroom_name
+            FROM permission
+            JOIN professor ON permission.professor_user_id = professor.user_id
+            JOIN usuario ON permission.user_id = usuario.id
+            JOIN classroom ON permission.classroom_id = classroom.id
+            WHERE permission.id = %s
+            """
+        cursor.execute(query, (id,))
         register = cursor.fetchone()
         if register:
             permission = Permission(register[0], register[1], register[2], register[3], register[4], register[5])

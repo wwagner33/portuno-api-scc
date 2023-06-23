@@ -31,9 +31,12 @@ def get_classroom(id):
 def create_classroom():
     data = request.get_json()
     print(data)
-    new_classroom = Classroom(data['id'], data['name'], data['short_name'], data['floor'], data['type'], data['professor_user_id'])
+    new_classroom = Classroom(data['id'], data['name'], data['short_name'], data['floor'],
+                              data['type'], data['professor'], None, None)
     try:
-        ClassroomDAO.insertClassroom(new_classroom)
+        success = ClassroomDAO.insertClassroom(new_classroom)
+        if not success:
+            return jsonify({"message": "Not Work"}), 404
     except Exception as e:
         return jsonify({"message": "an error has occurred: " + str(e)}), 500
     return jsonify({"message": "classroom created successfully"}), 200

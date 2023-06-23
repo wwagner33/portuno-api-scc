@@ -20,21 +20,26 @@ class ClassroomDAO:
 
 
 def insertClassroom(classroom):
+    success_operation = False
     try:
         connection = ClassroomDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"INSERT INTO classroom (id, name, short_name, floor,  type) "
-                       f"VALUES ('{classroom.id}', '{classroom.name}', '{classroom.short_name}',"
-                       f" '{classroom.floor}', '{classroom.type}')")
+        professor_id = classroom.professor if classroom.professor is not None else 'NULL'
+
+        cursor.execute(f"INSERT INTO classroom (id, name, short_name, floor, type, professor_user_id) "
+                       f"VALUES ('{classroom.id}', '{classroom.name}', '{classroom.short_name}', "
+                       f"'{classroom.floor}', '{classroom.type}', {professor_id})")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
+            success_operation = True
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
         if connection:
             cursor.close()
         connection.close()
+        return success_operation
 
 
 def getOneClassroom(id):
@@ -43,10 +48,34 @@ def getOneClassroom(id):
     try:
         connection = ClassroomDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM classroom WHERE id = '{id}'")
+        query = """
+                   SELECT
+                    classroom.id,
+                    classroom.name,
+                    classroom.short_name,
+                    classroom.floor,
+                    classroom.type,
+                    (select u.name from usuario as u
+                     where u.id = classroom.professor_user_id) AS professor_responsavel,
+                    CASE
+                        WHEN occupancy.classroom_id IS NULL THEN 'avaliable'
+                        ELSE 'occupied'
+                    END AS status,
+                    usuario.name AS user_name
+                    FROM classroom
+                    LEFT JOIN (
+                        SELECT *
+                        FROM occupancy
+                        WHERE ending_date_time IS NULL
+                    ) AS occupancy ON classroom.id = occupancy.classroom_id
+                    LEFT JOIN usuario ON occupancy.user_id = usuario.id
+                    WHERE classroom.id = %s
+                """
+        cursor.execute(query, (id,))
         register = cursor.fetchone()
         if register:
-            classroom = Classroom(register[0], register[1], register[2], register[3], register[4], register[5])
+            classroom = Classroom(register[0], register[1], register[2], register[3],
+                                  register[4], register[5], register[6], register[7])
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -61,10 +90,33 @@ def getAllClassrooms():
     try:
         connection = ClassroomDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM classroom")
+        query = """
+           SELECT
+            classroom.id,
+            classroom.name,
+            classroom.short_name,
+            classroom.floor,
+            classroom.type,
+            (select u.name from usuario as u
+             where u.id = classroom.professor_user_id) AS professor_responsavel,
+            CASE
+                WHEN occupancy.classroom_id IS NULL THEN 'avaliable'
+                ELSE 'occupied'
+            END AS status,
+            usuario.name AS user_name
+            FROM classroom
+            LEFT JOIN (
+                SELECT *
+                FROM occupancy
+                WHERE ending_date_time IS NULL
+            ) AS occupancy ON classroom.id = occupancy.classroom_id
+            LEFT JOIN usuario ON occupancy.user_id = usuario.id
+        """
+        cursor.execute(query)
         registers = cursor.fetchall()
         for register in registers:
-            classrooms.append(Classroom(register[0], register[1], register[2], register[3], register[4], register[5]))
+            classrooms.append(Classroom(register[0], register[1], register[2], register[3],
+                                        register[4], register[5], register[6], register[7]))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:

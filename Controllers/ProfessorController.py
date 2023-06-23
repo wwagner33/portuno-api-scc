@@ -39,6 +39,7 @@ def create_professor():
         return jsonify({"message": "an error has occurred: " + str(e)}), 500
     return jsonify({"message": "Professor created successfully"}), 200
 
+
 @professor_bp.route('/professors/<id>', methods=['DELETE'])
 def delete_professor(id):
     try:
