@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_session import Session
 from Controllers import UserController, SemesterController, \
     SchoolClassController, ClassroomController, ProfessorController, \
     OccupancyController, PermissionController
@@ -11,6 +12,10 @@ app.register_blueprint(ClassroomController.classroom_bp)
 app.register_blueprint(ProfessorController.professor_bp)
 app.register_blueprint(OccupancyController.occupancy_bp)
 app.register_blueprint(PermissionController.permission_bp)
+
+app.config['SESSION_TYPE'] = 'filesystem'
+
+Session(app)
 
 if __name__ == '__main__':
     app.env = 'development'

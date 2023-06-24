@@ -62,7 +62,7 @@ def getOneOccupancy(id):
             LEFT JOIN class ON occupancy.class_id = class.id
             WHERE occupancy.id = %s
             """
-        cursor.execute(query, id)
+        cursor.execute(query, (id,))
         register = cursor.fetchone()
         if register:
             occupancy = Occupancy(register[0], register[1], register[2], register[3],
