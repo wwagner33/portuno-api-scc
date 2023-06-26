@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, Blueprint, request, session
-from DAO import UserDAO
+from DAO import UserDAO, ProfessorDAO
+import secrets
 from entities.User import User
 
 app = Flask(__name__)
@@ -75,14 +76,15 @@ def auth():
     id = data['id']
     password = str(data['password'])
     user = UserDAO.getOneUser(id)
+    isProfessor = (ProfessorDAO.getOneProfessor(id) is not None)
+    print(isProfessor)
     if user:
         if user.password == password:
-            print("Era pra ficar autorizado")
-            authorization = True
+            authorization = secrets.token_hex(16)  # Generate a random authorization token
     if authorization:
         session['user_id'] = user.id
         session['user_name'] = user.name
-        return jsonify({"authorization": True, "user": {"id": user.id, "name": user.name}})
+        return jsonify({"authorization": authorization, "user": {"id": user.id, "name": user.name, "isProfessor": isProfessor}})
     else:
-        session.clear()  # Remove todas as variáveis da sessão
-        return jsonify({"authorization": False, "message": "Falha no login"})
+        session.clear()  # Remove all session variables
+        return jsonify({"authorization": False, "message": "Login failed"})
