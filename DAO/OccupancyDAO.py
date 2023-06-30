@@ -65,8 +65,31 @@ def getOneOccupancy(id):
         cursor.execute(query, (id,))
         register = cursor.fetchone()
         if register:
-            occupancy = Occupancy(register[0], register[1], register[2], register[3],
-                                  register[4], register[5], register[6], register[7])
+            occupancy = Occupancy(register[0], register[2], register[3], register[1], register[6],
+                                  register[5], register[4], register[7])
+    except (Exception, psycopg2.Error) as error:
+        traceback.print_exc()
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+        return occupancy
+
+def getOneOccupancyByUser(idUser):
+    occupancy = None
+    try:
+        connection = OccupancyDAO().openConnection()
+        cursor = connection.cursor()
+        query = """
+            SELECT * FROM occupancy
+            WHERE user_id = %s AND ending_date_time is NULL
+            """
+        cursor.execute(query, (idUser,))
+        register = cursor.fetchone()
+        if register:
+            print(register)
+            occupancy = Occupancy(register[0], register[2], register[3], register[1], register[6],
+                                  register[5], register[4], register[7])
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -84,8 +107,9 @@ def getAllOccupancies():
         cursor.execute(f"SELECT * FROM occupancy")
         registers = cursor.fetchall()
         for register in registers:
-            occupancy = Occupancy(register[0], register[1], register[2], register[3],
-                                  register[4], register[5], register[6], register[7])
+            print(register)
+            occupancy = Occupancy(register[0], register[2], register[3], register[1], register[6],
+                                  register[5], register[4], register[7])
             occupancies.append(occupancy)
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
@@ -96,13 +120,13 @@ def getAllOccupancies():
         return occupancies
 
 
-def updateOccupancy(id, newOccupancy):
+def updateOccupancy(idRoom, newOccupancy):
     success_operation = False
     try:
         connection = OccupancyDAO().openConnection()
         cursor = connection.cursor()
-        cursor.execute("UPDATE occupancy SET ending_date_time = %s WHERE id = %s",
-                       (newOccupancy.ending_time, id))
+        cursor.execute("UPDATE occupancy SET ending_date_time = %s WHERE classroom_id = %s AND ending_date_time is NULL",
+                       (newOccupancy.ending_time, idRoom))
 
         connection.commit()
         if cursor.rowcount > 0:

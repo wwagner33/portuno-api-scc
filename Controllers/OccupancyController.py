@@ -28,6 +28,14 @@ def get_occupancy(id):
         return jsonify({"data": serialized_user}), 200
     return jsonify({"message": "Occupancy not found"}), 500
 
+@occupancy_bp.route('/occupancies/user/<id>', methods=['GET'])
+def get_occupancy_by_user(id):
+    occupancy = OccupancyDAO.getOneOccupancyByUser(id)
+    if occupancy:
+        serialized_user = occupancy.__dict__
+        return jsonify({"data": serialized_user}), 200
+    return jsonify({"message": "Occupancy not found"}), 500
+
 
 @occupancy_bp.route('/occupancies', methods=['POST'])
 def create_occupancy():
