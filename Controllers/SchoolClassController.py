@@ -30,7 +30,7 @@ def get_school_class(id):
 @school_class_bp.route('/classes', methods=['POST'])
 def create_school_class():
     data = request.get_json()
-    new_school_class = SchoolClass(None, data['day_week'], data['subject'], data['hour'])
+    new_school_class = SchoolClass(None, data['day_week'], data['subject'], data['start_hour'], data['finish_hour'])
     try:
         SchoolClassDAO.insertSchoolClass(new_school_class)
     except Exception as e:
@@ -41,7 +41,7 @@ def create_school_class():
 @school_class_bp.route('/classes/<id>', methods=['PUT'])
 def update_school_class(id):
     data = request.get_json()
-    new_school_class = SchoolClass(None, data['day_week'], data['subject'], data['hour'])
+    new_school_class = SchoolClass(None, data['day_week'], data['subject'], data['start_hour'], data['finish_hour'])
     try:
         SchoolClassDAO.updateSchoolClass(id, new_school_class)
     except Exception as e:

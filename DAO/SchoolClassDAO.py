@@ -24,8 +24,9 @@ def insertSchoolClass(schoolClass):
         connection = SchoolClassDao().openConnection()
         cursor = connection.cursor()
 
-        cursor.execute(f"INSERT INTO class (day_week, subject, hour) "
-                       f"VALUES ('{schoolClass.day_week}', '{schoolClass.subject}', '{schoolClass.hour}')")
+        cursor.execute(f"INSERT INTO class (day_week, subject, start_hour, finish_hour) "
+                       f"VALUES ('{schoolClass.day_week}', '{schoolClass.subject}', "
+                       f"'{schoolClass.start_hour}', '{schoolClass.finish_hour}')")
         connection.commit()
         if cursor.rowcount > 0:
             print("Success insert!")
@@ -45,7 +46,8 @@ def getOneSchoolClass(id):
         cursor.execute(f"SELECT * FROM class WHERE id = '{id}'")
         register = cursor.fetchone()
         if register:
-            schoolClass = SchoolClass(register[0], register[1], register[2], register[3].strftime("%H:%M:%S"))
+            schoolClass = SchoolClass(register[0], register[1], register[2], register[3].strftime("%H:%M:%S"),
+                                      register[4].strftime("%H:%M:%S"))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -63,7 +65,8 @@ def getAllSchoolClasses():
         cursor.execute(f"SELECT * FROM class")
         registers = cursor.fetchall()
         for register in registers:
-            schoolClasses.append(SchoolClass(register[0], register[1], register[2], register[3].strftime("%H:%M:%S")))
+            schoolClasses.append(SchoolClass(register[0], register[1], register[2], register[3].strftime("%H:%M:%S"),
+                                             register[4].strftime("%H:%M:%S")))
     except (Exception, psycopg2.Error) as error:
         traceback.print_exc()
     finally:
@@ -81,7 +84,8 @@ def updateSchoolClass(id, newSchoolClass):
         cursor.execute(f"UPDATE class SET "
                        f"day_week = '{newSchoolClass.day_week}', "
                        f"subject = '{newSchoolClass.subject}', "
-                       f"hour = '{newSchoolClass.hour}' "
+                       f"start_hour = '{newSchoolClass.start_hour}', "
+                       f"finish_hour = '{newSchoolClass.finish_hour}' "
                        f"WHERE id = '{id}'")
 
         connection.commit()

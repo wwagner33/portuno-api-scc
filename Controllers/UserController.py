@@ -9,64 +9,54 @@ users_bp = Blueprint('users', __name__)
 
 @users_bp.route('/users', methods=['GET'])
 def get_users():
-    if 'user_id' in session:
-        users = UserDAO.getAllUsers()
-        try:
-            if users:
-                serialized_users = [user.__dict__ for user in users]
-                return jsonify({"data": serialized_users}), 200
-            return jsonify({"message": "No content"}), 204
-        except Exception as e:
-            return jsonify({"message": "an error has occurred: " + str(e)}), 500
-    return jsonify({"message": "access denied"}), 404
+    users = UserDAO.getAllUsers()
+    try:
+        if users:
+            serialized_users = [user.__dict__ for user in users]
+            return jsonify({"data": serialized_users}), 200
+        return jsonify({"message": "No content"}), 204
+    except Exception as e:
+        return jsonify({"message": "an error has occurred: " + str(e)}), 500
 
 
 @users_bp.route('/users/<id>', methods=['GET'])
 def get_user(id):
-    if 'user_id' in session:
-        user = UserDAO.getOneUser(id)
-        if user:
-            serialized_user = user.__dict__
-            return jsonify({"data": serialized_user}), 200
-        return jsonify({"message": "User not found"}), 500
-    return jsonify({"message": "access denied"}), 404
-
+    user = UserDAO.getOneUser(id)
+    print(user)
+    if user:
+        serialized_user = user.__dict__
+        return jsonify({"data": serialized_user}), 200
+    return jsonify({"message": "User not found"}), 500
 
 @users_bp.route('/users', methods=['POST'])
 def create_user():
-    if 'user_id' in session:
-        data = request.get_json()
-        new_user = User(data['id'], data['name'], data['password'], data['ddd'], data['number'])
-        try:
-            UserDAO.insertUser(new_user)
-        except Exception as e:
-            return jsonify({"message": "an error has occurred: " + str(e)}), 500
-        return jsonify({"message": "User created successfully"}), 200
-    return jsonify({"message": "access denied"}), 404
+    data = request.get_json()
+    new_user = User(data['id'], data['name'], data['password'], data['ddd'], data['number'])
+    try:
+        UserDAO.insertUser(new_user)
+    except Exception as e:
+        return jsonify({"message": "an error has occurred: " + str(e)}), 500
+    return jsonify({"message": "User created successfully"}), 200
 
 
 @users_bp.route('/users/<id>', methods=['PUT'])
 def update_user(id):
-    if 'user_id' in session:
-        data = request.get_json()
-        new_user = User(data['id'], data['name'], data['password'], data['ddd'], data['number'])
-        try:
-            UserDAO.updateUser(id, new_user)
-        except Exception as e:
-            return jsonify({"message": "an error has occurred: " + str(e)}), 500
-        return jsonify({"message": "User updated successfully"}), 200
-    return jsonify({"message": "access denied"}), 404
+    data = request.get_json()
+    new_user = User(data['id'], data['name'], data['password'], data['ddd'], data['number'])
+    try:
+        UserDAO.updateUser(id, new_user)
+    except Exception as e:
+        return jsonify({"message": "an error has occurred: " + str(e)}), 500
+    return jsonify({"message": "User updated successfully"}), 200
 
 
 @users_bp.route('/users/<id>', methods=['DELETE'])
 def delete_user(id):
-    if 'user_id' in session:
-        try:
-            UserDAO.deleteUser(id)
-        except Exception as e:
-            return jsonify({"message": "an error has occurred: " + str(e)}), 500
-        return jsonify({"message": "User deleted successfully"}), 200
-    return jsonify({"message": "access denied"}), 404
+    try:
+        UserDAO.deleteUser(id)
+    except Exception as e:
+        return jsonify({"message": "an error has occurred: " + str(e)}), 500
+    return jsonify({"message": "User deleted successfully"}), 200
 
 
 @users_bp.route('/auth', methods=['POST'])
@@ -82,6 +72,7 @@ def auth():
         if user.password == password:
             authorization = secrets.token_hex(16)  # Generate a random authorization token
     if authorization:
+        print(user.id)
         session['user_id'] = user.id
         session['user_name'] = user.name
         return jsonify({"authorization": authorization, "user": {"id": user.id, "name": user.name, "isProfessor": isProfessor}})
