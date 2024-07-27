@@ -15,7 +15,7 @@ Before starting to use the API, please follow the configuration steps below:
 **Clone the repository to your local environment:**
 
    ```
-   git clone https://github.com/your-username/portuno-api.git
+   git clone https://github.com/PORTUNO-SMD/portuno-api.git
    ```
 
 **Create a `.env` file in the project's root directory and set the required environment variables. These variables include the database credentials and other environment-specific configurations. A basic example of the `.env` file content is shown below:**
