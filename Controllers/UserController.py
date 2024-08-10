@@ -25,8 +25,8 @@ def get_user(id):
     print(user)
     if user:
         serialized_user = user.__dict__
-        return jsonify({"data": serialized_user}), 200
-    return jsonify({"message": "User not found"}), 500
+        return jsonify(serialized_user), 200
+    return jsonify({"message": "User not found"}), 404
 
 @users_bp.route('/users', methods=['POST'])
 def create_user():
