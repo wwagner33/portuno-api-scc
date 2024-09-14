@@ -18,7 +18,7 @@ class PermissionDAO:
 
     def openConnection(self):
         return psycopg2.connect(user=self.USER, password=self.PASSWORD,
-                                host=self.HOST, port=self.PORT, database=self.DATABASE)
+                                host=self.HOST, port=self.PORT, DATABASE=self.DATABASE)
 
 
 def insertPermission(permission):

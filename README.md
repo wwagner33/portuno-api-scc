@@ -4,9 +4,9 @@
 
 # PORTUNO API
 
-The **PORTUNO API** is a Python API that implements CRUD _(Create, Read, Update, Delete)_ endpoints for the entities and tables of the `PostgreSQL` database: Classroom, Occupancy, Permission, User, Professor, SchoolClass, and Semester. The API is built using `Flask`, which is a lightweight and modular web framework.
+The **PORTUNO API** is a Python API that implements CRUD _(Create, Read, Update, Delete)_ endpoints for the entities and tables of the `PostgreSQL` DATABASE: Classroom, Occupancy, Permission, User, Professor, SchoolClass, and Semester. The API is built using `Flask`, which is a lightweight and modular web framework.
 
-The PORTUNO project was conceived as part of the Integrated Project I course and developed as part of the Database I course in the Systems and Digital Media program at UFC (Federal University of Ceará).
+The PORTUNO project was conceived as part of the Integrated Project I course and developed as part of the DATABASE I course in the Systems and Digital Media program at UFC (Federal University of Ceará).
 
 # Getting started
 
@@ -18,7 +18,7 @@ Before starting to use the API, please follow the configuration steps below:
    git clone https://github.com/PORTUNO-SMD/portuno-api.git
    ```
 
-**Create a `.env` file in the project's root directory and set the required environment variables. These variables include the database credentials and other environment-specific configurations. A basic example of the `.env` file content is shown below:**
+**Create a `.env` file in the project's root directory and set the required environment variables. These variables include the DATABASE credentials and other environment-specific configurations. A basic example of the `.env` file content is shown below:**
 
    ```
    USER
@@ -38,7 +38,7 @@ Before starting to use the API, please follow the configuration steps below:
 
 # Endpoints
 
-The API follows an architecture with entity, DAO (Data Access Object), and controller layers. Each entity corresponds to a table in the database and has dedicated endpoints for CRUD operations. Below is the table with the available endpoints for each entity:
+The API follows an architecture with entity, DAO (Data Access Object), and controller layers. Each entity corresponds to a table in the DATABASE and has dedicated endpoints for CRUD operations. Below is the table with the available endpoints for each entity:
 
 ### Class
 
